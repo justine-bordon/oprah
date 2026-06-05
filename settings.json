@@ -1,0 +1,7 @@
+{
+    "lives": 3,
+    "enemies_per_round": 10,
+
+    "enemy_regenerator_tiles": 3,
+    "enemy_chameleon_frequency": 15
+}
