@@ -19,7 +19,7 @@ class GameController:
 
         match model.game_state:
             case GameState.PREGAME:
-                if view.input_space():
+                if view.leftclick_hold():
                     model.round_start()
                     pyxel.play(1, 3, 0, True)
             case GameState.ONGOING:
