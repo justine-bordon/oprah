@@ -35,7 +35,7 @@ class GameController:
                         model.tower_upgrade(r, c)
                 elif view.input_leftclick():
                     model.tower_place(r, c)
-                if view.input_space():
+                if view.input_leftclick_hold():
                     model.round_start()
             case _:
                 pass
