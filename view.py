@@ -77,7 +77,8 @@ class GameView:
             tile = path.contents[i]
             (x, y), _ = tile_corners(r, c)
             tile_color = (COLOR_EMPTY if tile.color is None else tile.color)
-            pyxel.rect(x, y, TILE_SIZE, TILE_SIZE, tile_color)
+            if not isinstance(tile, DefaultEnemy):
+                pyxel.rect(x, y, TILE_SIZE, TILE_SIZE, tile_color)
             if isinstance(tile, DefaultEnemy):
                 for k in range(tile.current_hp):
                     x1 = x + (k * 5)
