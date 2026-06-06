@@ -31,13 +31,20 @@ class ShooterDirection(Enum):
     CURSOR = 3
 
 class GameState(Enum):
+    MAIN_MENU = -1
     PREGAME = 0
     ONGOING = 1
+    PAUSED = 1.5
     BETWEEN_ROUNDS = 2
     WINNER = 3
     LOSER = 4
+    GAME_OVER = 5
+    LEADERBOARD = 6
 
-
+class GameMode(Enum):
+    CAMPAIGN = 0
+    ENDLESS = 1
+    
 class Tile(Protocol):
     @property
     def color(self) -> Color | None: ...
