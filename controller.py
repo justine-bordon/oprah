@@ -41,12 +41,12 @@ class GameController:
                     model.game_state = GameState.LEADERBOARD
                     
             case GameState.PREGAME:
-                if view.input_leftclick_hold():
+                if view.input_space():
                     model.round_start()
                     pyxel.play(1, 3, 0, True)
                     
             case GameState.ONGOING:
-                if pyxel.btnp(pyxel.KEY_ESCAPE) or pyxel.btnp(pyxel.KEY_P):
+                if view.input_space():
                     model.game_state = GameState.PAUSED
                     return
                     
@@ -56,7 +56,7 @@ class GameController:
                         pyxel.play(0,1)
                         
             case GameState.PAUSED:
-                if pyxel.btnp(pyxel.KEY_ESCAPE) or pyxel.btnp(pyxel.KEY_P):
+                if view.input_space():
                     model.game_state = GameState.ONGOING
                     
             case GameState.BETWEEN_ROUNDS:
@@ -67,7 +67,7 @@ class GameController:
                         model.tower_upgrade(r, c)
                 elif view.input_leftclick():
                     model.tower_place(r, c)
-                if view.input_leftclick_hold():
+                if view.input_space():
                     model.round_start()
                     
             case GameState.WINNER | GameState.LOSER:
