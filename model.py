@@ -4,6 +4,8 @@ from random import Random
 
 from defaults import *
 from classes import *
+import json
+import os
 
 class GameModel:
     def __init__(self, rows: int, cols: int, rng: Random, player: Shooter, tower: Shooter, stage: Stage) -> None:
@@ -26,9 +28,31 @@ class GameModel:
         self._towers: dict[tuple[int, int], Shooter] = {}
 
         self._rounds = stage.rounds
-        self._game_state = GameState.PREGAME
+        self._game_state = GameState.MAIN_MENU
         self._create_round()
+        
+        self._game_mode = None
+        self._player_name = ""
+        self._leaderboard = []
 
+        @property
+    def game_mode(self) -> GameMode | None: 
+        return self._game_mode
+    @game_mode.setter
+    def game_mode(self, mode: GameMode) -> None:
+        self._game_mode = mode
+    @property
+    def game_state(self) -> GameState: 
+        return self._game_state
+    @game_state.setter
+    def game_state(self, state: GameState) -> None:
+        self._game_state = state
+    @property
+    def player_name(self) -> str:
+        return self._player_name   
+    @player_name.setter
+    def player_name(self, name: str) -> None:
+        self._player_name = name
     @property
     def rows(self) -> int: return self._rows
     @property
@@ -116,9 +140,19 @@ class GameModel:
                     self._create_round()
                     return
                 else:
-                    self._current_round -= 1
-                    self._game_state = GameState.WINNER
-                    return
+                    if self._game_mode == GameMode.ENDLESS:
+                        # for Endless Mode
+                        self._total_rounds += 1
+                        new_enemies = [self._rng.choice([DefaultEnemy, RegeneratorEnemy, ChameleonEnemy])() for _ in range(ENEMY_COUNT + self._current_round)] 
+                        self._rounds.append(Round(self._enemy_colors, new_enemies))
+                        self._game_state = GameState.BETWEEN_ROUNDS
+                        self._create_round()
+                        return
+                    else:
+                        # for Campaign Mode
+                        self._current_round -= 1
+                        self._game_state = GameState.WINNER
+                        return
 
             self._tick += 1
 
@@ -308,6 +342,23 @@ class GameModel:
             self._exp += enemy.exp_yield
             return PathTile(), True
         return enemy, False
+        
+    def load_leaderboard(self) -> None:
+        if os.path.exists("leaderboard.json"):
+            with open("leaderboard.json", "r") as file:
+                self._leaderboard = json.load(file)
+        else:
+            self._leaderboard = []
+
+    def save_score(self) -> None:
+        self.load_leaderboard()
+        new_entry = {"name": self._player_name, "score": self.exp, "round": self.current_round + 1}
+        self._leaderboard.append(new_entry)
+        
+        self._leaderboard = sorted(self._leaderboard, key=lambda x: x["score"], reverse=True)[:5]
+        
+        with open("leaderboard.json", "w") as file:
+            json.dump(self._leaderboard, file)
 
 
     @classmethod
