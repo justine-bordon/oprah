@@ -80,15 +80,34 @@ class GameView:
             if not isinstance(tile, DefaultEnemy):
                 pyxel.rect(x, y, TILE_SIZE, TILE_SIZE, tile_color)
             if isinstance(tile, DefaultEnemy):
-                for k in range(tile.current_hp):
-                    x1 = x + (k * 5)
-                    y1 = y + (k * 5)
-                    s = TILE_SIZE - (k * 10)
-                    pyxel.rectb(x1, y1, s, s, 1)
-            if path.in_tunnel(i):
-                pyxel.dither(0.5)
-                pyxel.rect(x, y, TILE_SIZE, TILE_SIZE, TUNNEL_COLOR)
-                pyxel.dither(1)
+                pyxel.pal(15, tile_color)
+                if type(tile) is DefaultEnemy:
+                    pyxel.blt(x, y, 0, 0, 0, TILE_SIZE, TILE_SIZE, 0)
+                elif type(tile) is RegeneratorEnemy:
+                    pyxel.blt(x, y, 0, 16, 0, TILE_SIZE, TILE_SIZE, 0)
+                    
+                    acquired_hp = tile.current_hp - ENEMY_HITPOINTS
+                    for hps in range(acquired_hp):
+                        overlay_x = x + 6 + (hps * 8)
+                        overlay_y = y + TILE_SIZE - 12
+                        
+                        pyxel.pal()
+                        pyxel.blt(overlay_x, overlay_y, 0, 0, 16, 8, 8, 0)
+                        pyxel.pal(15, tile_color)
+                elif type(tile) is ChameleonEnemy:
+                    pyxel.blt(x, y, 0, 32, 0, TILE_SIZE, TILE_SIZE, 0)
+                    
+                pyxel.pal()
+
+                # for k in range(tile.current_hp):
+                   # x1 = x + (k * 5)
+                   # y1 = y + (k * 5)
+                   # s = TILE_SIZE - (k * 10)
+                   # pyxel.rectb(x1, y1, s, s, 1)
+           # if path.in_tunnel(i):
+               # pyxel.dither(0.5)
+               # pyxel.rect(x, y, TILE_SIZE, TILE_SIZE, TUNNEL_COLOR)
+               # pyxel.dither(1)
 
     def draw_towers(self, towers: list[Shooter]):
         for tower in towers:
