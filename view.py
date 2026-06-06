@@ -147,6 +147,36 @@ class GameView:
         height = 50
         pyxel.rect((self.width - width) / 2, (self.height - height) / 2, width, height, BACKGROUND_COLOR)
         pyxel.text((self.width / 2) - 17, (self.height / 2) - 2, "GAME OVER", TEXT_COLOR)
+        
+    def draw_main_menu(self) -> None:
+        self.reset_screen()
+        pyxel.text((self.width / 2) - 40, (self.height / 2) - 20, "ZUMA TOWER DEFENSE", TEXT_COLOR)
+        pyxel.text((self.width / 2) - 40, (self.height / 2) + 10, "[1] CAMPAIGN MODE", COLOR_SUCCESS)
+        pyxel.text((self.width / 2) - 40, (self.height / 2) + 25, "[2] ENDLESS MODE", COLOR_ERROR)
+        pyxel.text((self.width / 2) - 40, (self.height / 2) + 40, "[L] LEADERBOARD", COLOR_UPGRADE)
+        
+
+    def draw_pause(self) -> None:
+        pyxel.dither(0.5)
+        pyxel.rect(0, 0, self.width, self.height, BACKGROUND_COLOR)
+        pyxel.dither(1)
+        pyxel.text((self.width / 2) - 15, self.height / 2, "PAUSED", TEXT_COLOR)
+
+    def draw_name_input(self, current_name: str) -> None:
+        self.reset_screen()
+        pyxel.text((self.width / 2) - 40, (self.height / 2) - 20, "ENTER YOUR NAME:", TEXT_COLOR)
+        pyxel.text((self.width / 2) - 15, (self.height / 2), current_name + "_", COLOR_SUCCESS)
+        pyxel.text((self.width / 2) - 60, (self.height / 2) + 30, "PRESS [ENTER] TO SUBMIT", TEXT_COLOR)
+
+    def draw_leaderboard(self, leaderboard_data: list) -> None:
+        self.reset_screen()
+        pyxel.text((self.width / 2) - 25, BORDER_WIDTH, "TOP SCORES", COLOR_UPGRADE)
+        
+        y_offset = BORDER_WIDTH + 30
+        for i, entry in enumerate(leaderboard_data):
+            text = f"{i+1}. {entry['name'].upper()} - Score: {entry['score']} (Rnd: {entry['round']})"
+            pyxel.text(BORDER_WIDTH + 20, y_offset, text, TEXT_COLOR)
+            y_offset += 15
 
     def draw_test(self, txt: str) -> None:
         pyxel.text((self.width / 2) - 43, (BORDER_WIDTH / 2) - 8, txt, TEXT_COLOR)
