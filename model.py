@@ -35,7 +35,10 @@ class GameModel:
         self._player_name = ""
         self._leaderboard = []
 
-        @property
+    @property
+    def leaderboard(self) -> list:
+        return self._leaderboard
+    @property
     def game_mode(self) -> GameMode | None: 
         return self._game_mode
     @game_mode.setter
