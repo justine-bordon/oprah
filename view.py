@@ -98,16 +98,11 @@ class GameView:
                     pyxel.blt(x+24, y+24, 0, 32, 0, TILE_SIZE//4, TILE_SIZE//4, 0, scale = 4)
                     
                 pyxel.pal()
-
-                # for k in range(tile.current_hp):
-                   # x1 = x + (k * 5)
-                   # y1 = y + (k * 5)
-                   # s = TILE_SIZE - (k * 10)
-                   # pyxel.rectb(x1, y1, s, s, 1)
-           # if path.in_tunnel(i):
-               # pyxel.dither(0.5)
-               # pyxel.rect(x, y, TILE_SIZE, TILE_SIZE, TUNNEL_COLOR)
-               # pyxel.dither(1)
+                
+            if path.in_tunnel(i):
+                pyxel.dither(0.5)
+                pyxel.rect(x, y, TILE_SIZE, TILE_SIZE, TUNNEL_COLOR)
+                pyxel.dither(1)
 
     def draw_towers(self, towers: list[Shooter]):
         for tower in towers:
