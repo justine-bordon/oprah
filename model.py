@@ -498,7 +498,7 @@ class GameModel:
         return cls(GRID_ROWS, GRID_COLS, rng, player, tower, stage)
         
     @classmethod
-    def phase5(cls) -> GameModel:
+    def phase6(cls) -> GameModel:
         rng = Random()
         player = Shooter.base_player(ShooterDirection.CURSOR, rng)
         player.place(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
