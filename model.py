@@ -494,4 +494,36 @@ class GameModel:
 
         return cls(GRID_ROWS, GRID_COLS, rng, player, tower, stage)
         
+    @classmethod
+    def phase5(cls) -> GameModel:
+        rng = Random()
+        player = Shooter.base_player(ShooterDirection.CURSOR, rng)
+        player.place(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+        tower = Shooter.base_tower(ShooterDirection.WASD, rng)
+
+        flow = [Direction.UP, Direction.UP, Direction.UP, Direction.UP, Direction.UP, Direction.RIGHT, Direction.RIGHT, Direction.RIGHT, Direction.RIGHT, Direction.RIGHT, Direction.RIGHT, Direction.RIGHT, Direction.DOWN, Direction.DOWN, Direction.DOWN, Direction.DOWN, Direction.DOWN, Direction.LEFT, Direction.LEFT, Direction.LEFT, Direction.LEFT, Direction.LEFT, Direction.UP, Direction.UP]
+        path = Path(5, 0, flow, [Tunnel(10, 5), Tunnel(20, 5)], [])
+
+        enemy_colors = [Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.PURPLE]
+        rng.shuffle(enemy_colors)
+        enemy_colors = enemy_colors[:6]
+        rounds = []
+        
+        for _ in range(12):
+            enemy_list = []
+            for _ in range(ENEMY_COUNT):
+                enemy_type = rng.choice([
+                    DefaultEnemy, 
+                    DefaultEnemy,
+                    RegeneratorEnemy, 
+                    ChameleonEnemy
+                ])
+                enemy_list.append(enemy_type())
+            
+            rounds.append(Round(enemy_colors, enemy_list))
+
+        stage = Stage([path], rounds, allow_upgrades = True)
+
+        return cls(GRID_ROWS, GRID_COLS, rng, player, tower, stage)
+        
 
