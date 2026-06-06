@@ -82,9 +82,9 @@ class GameView:
             if isinstance(tile, DefaultEnemy):
                 pyxel.pal(15, tile_color)
                 if type(tile) is DefaultEnemy:
-                    pyxel.blt(x, y, 0, 0, 0, TILE_SIZE//4, TILE_SIZE//4, 0, scale = 4)
+                    pyxel.blt(x, y, 0, 0, 0, TILE_SIZE//4, TILE_SIZE//4, 0, scale = -4)
                 elif type(tile) is RegeneratorEnemy:
-                    pyxel.blt(x, y, 0, 16, 0, TILE_SIZE//4, TILE_SIZE//4, 0, scale = 4)
+                    pyxel.blt(x, y, 0, 16, 0, TILE_SIZE//4, TILE_SIZE//4, 0, scale = -4)
                     
                     acquired_hp = tile.current_hp - ENEMY_HITPOINTS
                     for hps in range(acquired_hp):
@@ -95,7 +95,7 @@ class GameView:
                         pyxel.blt(overlay_x, overlay_y, 0, 0, 16, 8, 8, 0)
                         pyxel.pal(15, tile_color)
                 elif type(tile) is ChameleonEnemy:
-                    pyxel.blt(x, y, 0, 32, 0, TILE_SIZE//4, TILE_SIZE//4, 0, scale = 4)
+                    pyxel.blt(x, y, 0, 32, 0, TILE_SIZE//4, TILE_SIZE//4, 0, scale = -4)
                     
                 pyxel.pal()
 
