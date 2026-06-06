@@ -4,6 +4,14 @@ from view import GameView
 from defaults import *
 from classes import *
 
+def get_char() -> str:
+    for key in range(pyxel.KEY_A, pyxel.KEY_Z + 1):
+        if pyxel.btnp(key):
+            return chr(key - pyxel.KEY_A + 97)
+    if pyxel.btnp(pyxel.KEY_SPACE): return " "
+    if pyxel.btnp(pyxel.KEY_BACKSPACE): return "BACKSPACE"
+    return ""
+    
 
 class GameController:
     def __init__(self, model: GameModel, view: GameView) -> None:
@@ -13,20 +21,44 @@ class GameController:
     def start(self) -> None:
         self._view.start(self, self)
 
+    def reset_game(self) -> None:
+        self._model = GameModel.phase6()
+
     def update(self) -> None:
         model = self._model
         view = self._view
 
         match model.game_state:
+            case GameState.MAIN_MENU:
+                if pyxel.btnp(pyxel.KEY_1):
+                    model.game_mode = GameMode.CAMPAIGN
+                    model.game_state = GameState.PREGAME
+                elif pyxel.btnp(pyxel.KEY_2):
+                    model.game_mode = GameMode.ENDLESS
+                    model.game_state = GameState.PREGAME
+                elif pyxel.btnp(pyxel.KEY_L):
+                    model.load_leaderboard()
+                    model.game_state = GameState.LEADERBOARD
+                    
             case GameState.PREGAME:
                 if view.input_leftclick_hold():
                     model.round_start()
                     pyxel.play(1, 3, 0, True)
+                    
             case GameState.ONGOING:
+                if pyxel.btnp(pyxel.KEY_ESCAPE) or pyxel.btnp(pyxel.KEY_P):
+                    model.game_state = GameState.PAUSED
+                    return
+                    
                 model.aim(view.cursor_pos(), view.input_wasd())
                 if view.input_leftclick_hold():
                     if model.shoot():
                         pyxel.play(0,1)
+                        
+            case GameState.PAUSED:
+                if pyxel.btnp(pyxel.KEY_ESCAPE) or pyxel.btnp(pyxel.KEY_P):
+                    model.game_state = GameState.ONGOING
+                    
             case GameState.BETWEEN_ROUNDS:
                 x, y = view.cursor_pos()
                 r, c = coordinate_to_grid(model.rows, model.cols, x, y)
@@ -37,6 +69,29 @@ class GameController:
                     model.tower_place(r, c)
                 if view.input_leftclick_hold():
                     model.round_start()
+                    
+            case GameState.WINNER | GameState.LOSER:
+                if view.input_space():
+                    model.game_state = GameState.GAME_OVER
+                    
+            case GameState.GAME_OVER:
+                char = get_typed_char()
+                if char == "BACKSPACE":
+                    model.player_name = model.player_name[:-1]
+                elif char and len(model.player_name) < 10:
+                    model.player_name += char
+                    
+                if pyxel.btnp(pyxel.KEY_RETURN):
+                    if model.player_name.strip() == "":
+                        model.player_name = "ANONYMOUS"
+                    model.save_score()
+                    model.load_leaderboard()
+                    model.game_state = GameState.LEADERBOARD
+                    
+            case GameState.LEADERBOARD:
+                if pyxel.btnp(pyxel.KEY_R) or pyxel.btnp(pyxel.KEY_ESCAPE):
+                    self.reset_game() 
+                    
             case _:
                 pass
 
@@ -47,6 +102,18 @@ class GameController:
     def draw(self) -> None:
         model = self._model
         view = self._view
+        
+        if model.game_state == GameState.MAIN_MENU:
+            view.draw_main_menu()
+            view.draw_cursor()
+            return
+            
+        elif model.game_state == GameState.GAME_OVER:
+            view.draw_game_over(model.player_name)
+            return
+            
+        elif model.game_state == GameState.LEADERBOARD:
+            view.draw_leaderboard(model.leaderboard)
 
         view.reset_screen()
         for path in model.paths:
@@ -80,5 +147,8 @@ class GameController:
                 view.draw_winner()
             case GameState.LOSER:
                 view.draw_gameover()
+                
+        if model.game_state == GameState.PAUSED:
+            view.draw_pause()
 
         view.draw_cursor()
